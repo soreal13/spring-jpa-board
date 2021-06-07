@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/springjpaboot
+    hikari:
+      maximum-pool-size: 4
+    username: soreal
+    password: pass
+
+  jpa:
+    hibernate:
+      ddel-auto: create
+    generate-ddl: true
