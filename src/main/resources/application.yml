@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/springjpaboot
+    url: jdbc:mysql://localhost:3306/springboot
     hikari:
       maximum-pool-size: 4
     username: soreal
