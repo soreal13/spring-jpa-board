@@ -35,10 +35,8 @@ public class BoardController {
     @GetMapping("/")
     public String list(@PageableDefault Pageable pageable, Model model) {
         Page<Board> boardList = boardService.getBoardList(pageable);
-        Integer[] pageList = boardService.getPageList(pageable.getPageNumber());
 
         model.addAttribute("boardList", boardList);
-        model.addAttribute("pageList", pageList);
 
         return "board/list.html";
     }
