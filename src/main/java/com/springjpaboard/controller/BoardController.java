@@ -1,10 +1,16 @@
 package com.springjpaboard.controller;
 
+import com.springjpaboard.domain.entity.Board;
 import com.springjpaboard.dto.BoardDto;
 import com.springjpaboard.service.BoardService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 public class BoardController {
@@ -15,8 +21,25 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+//    @GetMapping("/")
+//    public String list(Model model, @RequestParam(value= "page", defaultValue = "1") Integer pageNum) {
+//        List<BoardDto> boardDtoList = boardService.getBoardList(pageNum);
+//        Integer[] pageList = boardService.getPageList(pageNum);
+//
+//        model.addAttribute("boardList", boardDtoList);
+//        model.addAttribute("pageList", pageList);
+//
+//        return "board/list.html";
+//    }
+
     @GetMapping("/")
-    public String list() {
+    public String list(@PageableDefault Pageable pageable, Model model) {
+        Page<Board> boardList = boardService.getBoardList(pageable);
+        Integer[] pageList = boardService.getPageList(pageable.getPageNumber());
+
+        model.addAttribute("boardList", boardList);
+        model.addAttribute("pageList", pageList);
+
         return "board/list.html";
     }
 
@@ -30,4 +53,44 @@ public class BoardController {
         boardService.savePost(boardDto);
         return "redirect:/";
     }
+
+    @GetMapping("/post/{id}")
+    public String detail(@PathVariable("id") Long id, Model model) {
+        BoardDto boardDto = boardService.getPost(id);
+
+        model.addAttribute("boardDto", boardDto);
+        return "board/detail.html";
+    }
+
+    @GetMapping("/post/edit/{id}")
+    public String edit(@PathVariable("id") Long id, Model model) {
+        BoardDto boardDto = boardService.getPost(id);
+
+        model.addAttribute("boardDto", boardDto);
+        return "board/update.html";
+    }
+
+    @PostMapping("/post/edit/{id}")
+    public String update(BoardDto boardDto) {
+        boardService.savePost(boardDto);
+        return "redirect:/";
+    }
+
+    @PostMapping("/post/{id}")
+    public String delete(@PathVariable("id") Long id) {
+        boardService.deletePost(id);
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/board/search")
+    public String search(@RequestParam(value = "keyword") String keyword, Model model) {
+        List<BoardDto> boardDtoList = boardService.searchPosts(keyword);
+        model.addAttribute("boardList", boardDtoList);
+
+        return "board/list.html";
+    }
+
+
+
 }
